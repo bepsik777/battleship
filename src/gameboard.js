@@ -28,10 +28,10 @@ export const gameboardFactory = () => {
     board.forEach((row) => {
       let string = "";
       row.forEach((field) => {
-        if (!field.occupiedByShip){
-            string += `| ${field.position} |`;
+        if (!field.occupiedByShip) {
+          string += `| ${field.position} |`;
         } else if (field.occupiedByShip) {
-            string += '|  X  |'
+          string += "|  X  |";
         }
       });
       console.log(string);
@@ -71,6 +71,26 @@ export const gameboardFactory = () => {
     return neighbours;
   }
 
+  function findTargetFields(shipLength, x, y, direction, board) {
+    const targetFields = [];
+    for (let i = 0; i < shipLength; i++) {
+      if (direction === "horizontal") {
+        if (isOutOfBound(x, y + i)) {
+          console.log("out of bounds");
+          return false;
+        }
+        targetFields.push(board[x][y + i]);
+      } else if (direction === "vertical") {
+        if (isOutOfBound(x + i, y)) {
+          console.log("out of bounds");
+          return false;
+        }
+        targetFields.push(board[x + i][y]);
+      }
+    }
+    return targetFields;
+  }
+
   function isOutOfBound(x, y) {
     if (x < 0 || x > 9 || y < 0 || y > 9) return true;
     return false;
@@ -83,25 +103,11 @@ export const gameboardFactory = () => {
   function canShipBePlaced(shipLength, x, y, direction = "horizontal") {
     // if (x > 9 || x < 0 || y > 9 || y < 0) return false;
     const board = getBoard();
-    const fields = [];
+    const fields = findTargetFields(shipLength, x, y, direction, board);
     const neighbourFields = [];
 
-    // find the fields where the ship will be inserted
-    for (let i = 0; i < shipLength; i++) {
-      if (direction === "horizontal") {
-        if (y + i > 9) {
-          console.log("out of bounds");
-          return false;
-        }
-        fields.push(board[x][y + i]);
-      } else if (direction === "vertical") {
-        if (x + i > 9) {
-          console.log("out of bounds");
-          return false;
-        }
-        fields.push(board[x + i][y]);
-      }
-    }
+    if (!fields) return false;
+
     // find the neighbor fields
     fields.forEach((field) => {
       const neighbours = findNeighbourFields(field, fields);
@@ -117,11 +123,13 @@ export const gameboardFactory = () => {
     ) {
       return false;
     }
+    console.log(fields);
+    console.log(neighbourFields);
 
     return true;
   }
 
-  // function placeShip(shipLength, alignment, x, y) {
+  // function placeShip(shipLength, x, y, alignment) {
   //     const ship = shipFactory(shipLength)
   // }
 
@@ -137,6 +145,5 @@ export const gameboardFactory = () => {
 const boardObject = gameboardFactory();
 boardObject.initGameboard();
 boardObject.printBoard();
-// console.log(boardObject.canShipBePlaced(4, 3, 3, "vertical"));
-console.log(boardObject.canShipBePlaced(4, 6, 0, "vertical"));
-// console.log(boardObject.canShipBePlaced(4, 8, 8, "horizontal"));
+
+console.log(boardObject.canShipBePlaced(5, 12, 14, "vertical"));
