@@ -1,9 +1,9 @@
 const shipFactory = (length) => {
-  const shipLength = length;
   
   let numberOfHits = 0;
 
-  const getLength = () => shipLength;
+  const getLength = () => length;
+  const getNumberOfHits = () => numberOfHits
 
   const hit = () => {
     numberOfHits += 1
@@ -11,7 +11,7 @@ const shipFactory = (length) => {
   };
 
   const isSunk = () => {
-    if (numberOfHits === shipLength) return true;
+    if (numberOfHits === length) return true;
     return false;
   };
 
@@ -19,6 +19,7 @@ const shipFactory = (length) => {
     getLength,
     hit,
     isSunk,
+    getNumberOfHits
   };
 };
 
