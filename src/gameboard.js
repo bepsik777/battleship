@@ -167,7 +167,6 @@ export const gameboardFactory = () => {
       });
       fieldsOccupiedByShips.push(...occupied);
     });
-    // console.log(fieldsOccupiedByShips);
     if (fieldsOccupiedByShips.every((field) => field.hit === true)) return true;
     return false;
   }
