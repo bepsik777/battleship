@@ -30,13 +30,13 @@ export const gameboardFactory = () => {
       row.forEach((field) => {
         if (!field.occupiedByShip && !field.hit) {
           string += `| ${field.position} |`;
-        } else if(!field.occupiedByShip && field.hit) {
-            string += `|  -  |`;
+        } else if (!field.occupiedByShip && field.hit) {
+          string += `|  -  |`;
         } else if (field.occupiedByShip && !field.hit) {
           string += "|  O  |";
         } else if (field.occupiedByShip && field.hit) {
-            string += "|  X  |";
-          }
+          string += "|  X  |";
+        }
       });
       console.log(string);
     });
@@ -144,19 +144,32 @@ export const gameboardFactory = () => {
   }
 
   function receiveAttack(x, y) {
-    if (isOutOfBound(x,y)) {
+    if (isOutOfBound(x, y)) {
       console.log("out of bounds");
       return false;
     }
 
-    if(board[x][y].hit) {
-        console.log('field already hit')
-        return false
+    if (board[x][y].hit) {
+      console.log("field already hit");
+      return false;
     }
 
-    if (board[x][y].ship !== null) board[x][y].ship.hit()
+    if (board[x][y].ship !== null) board[x][y].ship.hit();
 
-    board[x][y].hit = true
+    board[x][y].hit = true;
+  }
+
+  function areAllShipsSunk() {
+    const fieldsOccupiedByShips = [];
+    board.forEach((row) => {
+      const occupied = row.filter((field) => {
+        return field.occupiedByShip === true;
+      });
+      fieldsOccupiedByShips.push(...occupied);
+    });
+    // console.log(fieldsOccupiedByShips);
+    if (fieldsOccupiedByShips.every((field) => field.hit === true)) return true;
+    return false;
   }
 
   return {
@@ -169,6 +182,7 @@ export const gameboardFactory = () => {
     canShipBePlaced,
     placeShip,
     receiveAttack,
+    areAllShipsSunk,
   };
 };
 
@@ -178,6 +192,16 @@ boardObject.placeShip(4, 4, 4, "vertical");
 boardObject.placeShip(2, 9, 8, "horizontal");
 boardObject.placeShip(2, 0, 9, "horizontal");
 boardObject.placeShip(2, 7, 8, "horizontal");
-boardObject.receiveAttack(4,4)
-boardObject.receiveAttack(4,3)
+boardObject.receiveAttack(4, 4);
+boardObject.receiveAttack(5, 4);
+boardObject.receiveAttack(6, 4);
+boardObject.receiveAttack(7, 4);
+boardObject.receiveAttack(4, 3);
+boardObject.receiveAttack(7, 8);
+boardObject.receiveAttack(7, 9);
+boardObject.receiveAttack(9, 8);
+boardObject.receiveAttack(9, 9);
 boardObject.printBoard();
+
+console.log(boardObject.areAllShipsSunk());
+
