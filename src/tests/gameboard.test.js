@@ -85,4 +85,9 @@ describe('receive attack', () => {
     test('attack out fo bounds', () => {
         expect(gameboard.receiveAttack(22, 0)).toEqual(false)
     })
+
+    test("can't attack already hit field", () => {
+        gameboard.receiveAttack(0,0)
+        expect(gameboard.receiveAttack(0,0)).toEqual(false)
+    })
 })

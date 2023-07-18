@@ -28,11 +28,15 @@ export const gameboardFactory = () => {
     board.forEach((row) => {
       let string = "";
       row.forEach((field) => {
-        if (!field.occupiedByShip) {
+        if (!field.occupiedByShip && !field.hit) {
           string += `| ${field.position} |`;
-        } else if (field.occupiedByShip) {
-          string += "|  X  |";
-        }
+        } else if(!field.occupiedByShip && field.hit) {
+            string += `|  -  |`;
+        } else if (field.occupiedByShip && !field.hit) {
+          string += "|  O  |";
+        } else if (field.occupiedByShip && field.hit) {
+            string += "|  X  |";
+          }
       });
       console.log(string);
     });
@@ -145,6 +149,11 @@ export const gameboardFactory = () => {
       return false;
     }
 
+    if(board[x][y].hit) {
+        console.log('field already hit')
+        return false
+    }
+
     if (board[x][y].ship !== null) board[x][y].ship.hit()
 
     board[x][y].hit = true
@@ -169,5 +178,6 @@ boardObject.placeShip(4, 4, 4, "vertical");
 boardObject.placeShip(2, 9, 8, "horizontal");
 boardObject.placeShip(2, 0, 9, "horizontal");
 boardObject.placeShip(2, 7, 8, "horizontal");
-// console.log(board[4][4], "board");
+boardObject.receiveAttack(4,4)
+boardObject.receiveAttack(4,3)
 boardObject.printBoard();
