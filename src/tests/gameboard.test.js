@@ -12,23 +12,55 @@ test("create field", () => {
 });
 
 describe("place ship on board", () => {
-  const ship = shipFactory(5);
-  const shipLength = ship.getLength();
   gameboard.initGameboard();
+  const ship = shipFactory(3);
+  const shipLength = ship.getLength();
   const board = gameboard.getBoard();
+  
   board[0][0].occupiedByShip = true;
   board[0][1].occupiedByShip = true;
   board[0][2].occupiedByShip = true;
 
   test("can't be placed out of bounds", () => {
-    expect(gameboard.canShipBePlaced(shipLength, 12, 14)).toBe(false);
+    const targetFields = gameboard.findTargetFields(
+      shipLength,
+      12,
+      14,
+      "horizontal",
+      board,
+    );
+    const neighbourFields = gameboard.findNeighbourFields(targetFields);
+    expect(gameboard.canShipBePlaced(targetFields, neighbourFields)).toBe(false);
   });
 
   test("can't be placed on an already occupied field", () => {
-    expect(gameboard.canShipBePlaced(shipLength, 0, 0)).toBe(false);
+    const targetFields = gameboard.findTargetFields(
+        shipLength,
+        0,
+        0,
+        "horizontal",
+        board,
+      );
+      const neighbourFields = gameboard.findNeighbourFields(targetFields);
+    expect(gameboard.canShipBePlaced(targetFields, neighbourFields)).toBe(false);
   });
 
   test("can't be placed on a field which edges touch another ship", () => {
-    expect(gameboard.canShipBePlaced(shipLength, 1, 1)).toBe(false);
+    const targetFields = gameboard.findTargetFields(
+        shipLength,
+        1,
+        1,
+        "horizontal",
+        board,
+      );
+      const neighbourFields = gameboard.findNeighbourFields(targetFields)
+    expect(gameboard.canShipBePlaced(targetFields, neighbourFields)).toBe(false);
+  });
+
+  test("place ship", () => {
+    gameboard.placeShip(3, 0, 0, "horizontal");
+    expect(board[0][0].occupiedByShip).toBe(true);
+    expect(board[0][1].occupiedByShip).toBe(true);
+    expect(board[0][2].occupiedByShip).toBe(true);
   });
 });

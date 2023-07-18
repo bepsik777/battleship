@@ -38,35 +38,45 @@ export const gameboardFactory = () => {
     });
   }
 
-  function findNeighbourFields(field, arrayToCheck) {
-    const x = field.position[0];
-    const y = field.position[1];
+  function findNeighbourFields(targetFields) {
+    if (!targetFields) return false;
     const board = getBoard();
-    let neighbours = [];
+    let duplicatedNeighbours = [];
+    const neighbours = [];
     const possbileNeighbours = [];
 
-    // all the possible neighbour fields
-    const possibleNeighboursCoordinates = [
-      [x - 1, y - 1],
-      [x - 1, y],
-      [x - 1, y + 1],
-      [x, y + 1],
-      [x + 1, y + 1],
-      [x + 1, y],
-      [x + 1, y - 1],
-      [x, y - 1],
-    ];
+    targetFields.forEach((field) => {
+      const x = field.position[0];
+      const y = field.position[1];
 
-    // push the neighbour fields that are not out of bounds
-    possibleNeighboursCoordinates.forEach((coordinate) => {
-      if (isOutOfBound(coordinate[0], coordinate[1]) === false)
-        possbileNeighbours.push(board[coordinate[0]][coordinate[1]]);
+      // all the possible neighbour fields
+      const possibleNeighboursCoordinates = [
+        [x - 1, y - 1],
+        [x - 1, y],
+        [x - 1, y + 1],
+        [x, y + 1],
+        [x + 1, y + 1],
+        [x + 1, y],
+        [x + 1, y - 1],
+        [x, y - 1],
+      ];
+
+      // push the neighbour fields that are not out of bounds
+      possibleNeighboursCoordinates.forEach((coordinate) => {
+        if (isOutOfBound(coordinate[0], coordinate[1]) === false)
+          possbileNeighbours.push(board[coordinate[0]][coordinate[1]]);
+      });
     });
 
-    // add only neighbours that are not included in the counter array
-    neighbours = possbileNeighbours.filter(
-      (neighbour) => arrayToCheck.includes(neighbour) === false,
+    // add only neighbours that are not included in the target fields array
+
+    duplicatedNeighbours = possbileNeighbours.filter(
+      (neighbour) => targetFields.includes(neighbour) === false,
     );
+
+    duplicatedNeighbours.forEach((field) => {
+      if (!neighbours.includes(field)) neighbours.push(field);
+    });
 
     return neighbours;
   }
@@ -100,50 +110,53 @@ export const gameboardFactory = () => {
     return field.occupiedByShip === true;
   }
 
-  function canShipBePlaced(shipLength, x, y, direction = "horizontal") {
-    // if (x > 9 || x < 0 || y > 9 || y < 0) return false;
-    const board = getBoard();
-    const fields = findTargetFields(shipLength, x, y, direction, board);
-    const neighbourFields = [];
-
-    if (!fields) return false;
-
-    // find the neighbor fields
-    fields.forEach((field) => {
-      const neighbours = findNeighbourFields(field, fields);
-      neighbours.forEach((field) => {
-        if (!neighbourFields.includes(field)) neighbourFields.push(field);
-      });
-    });
+  function canShipBePlaced(targetFields, neighbourFields) {
+    console.log(targetFields, "target fields");
+    if (!targetFields) return false;
 
     // if fields are already occupied, or neighbour fields are occupied, return false
     if (
-      fields.some(checkIfFieldOccupied) ||
+      targetFields.some(checkIfFieldOccupied) ||
       neighbourFields.some(checkIfFieldOccupied)
     ) {
       return false;
     }
-    console.log(fields);
-    console.log(neighbourFields);
 
     return true;
   }
 
-  // function placeShip(shipLength, x, y, alignment) {
-  //     const ship = shipFactory(shipLength)
-  // }
+  function placeShip(shipLength, x, y, direction = "horizontal") {
+    const board = getBoard();
+    const targetFields = findTargetFields(shipLength, x, y, direction, board);
+    const neighbourFields = findNeighbourFields(targetFields);
+    if (!canShipBePlaced(targetFields, neighbourFields))
+      return "ship cant be placed here";
+    const ship = shipFactory(shipLength);
+
+    targetFields.forEach((field) => {
+      field.occupiedByShip = true;
+      field.ship = ship;
+    });
+  }
 
   return {
     createField,
     initGameboard,
     printBoard,
     getBoard,
+    findTargetFields,
+    findNeighbourFields,
     canShipBePlaced,
+    placeShip,
   };
 };
 
 const boardObject = gameboardFactory();
 boardObject.initGameboard();
+boardObject.placeShip(4, 4, 4, "vertical");
+boardObject.placeShip(2, 9, 8, "horizontal");
+boardObject.placeShip(2, 0, 9, "horizontal");
+boardObject.placeShip(2, 7, 8, "horizontal");
+// console.log(board[4][4], "board");
 boardObject.printBoard();
 
-console.log(boardObject.canShipBePlaced(5, 12, 14, "vertical"));
