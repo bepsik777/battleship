@@ -139,6 +139,17 @@ export const gameboardFactory = () => {
     });
   }
 
+  function receiveAttack(x, y) {
+    if (isOutOfBound(x,y)) {
+      console.log("out of bounds");
+      return false;
+    }
+
+    if (board[x][y].ship !== null) board[x][y].ship.hit()
+
+    board[x][y].hit = true
+  }
+
   return {
     createField,
     initGameboard,
@@ -148,6 +159,7 @@ export const gameboardFactory = () => {
     findNeighbourFields,
     canShipBePlaced,
     placeShip,
+    receiveAttack,
   };
 };
 
@@ -159,4 +171,3 @@ boardObject.placeShip(2, 0, 9, "horizontal");
 boardObject.placeShip(2, 7, 8, "horizontal");
 // console.log(board[4][4], "board");
 boardObject.printBoard();
-
