@@ -133,14 +133,44 @@ export const gameboardFactory = () => {
     const board = getBoard();
     const targetFields = findTargetFields(shipLength, x, y, direction, board);
     const neighbourFields = findNeighbourFields(targetFields);
-    if (!canShipBePlaced(targetFields, neighbourFields))
-      return "ship cant be placed here";
+    if (!canShipBePlaced(targetFields, neighbourFields)) {
+      return false;
+    }
     const ship = shipFactory(shipLength);
 
     targetFields.forEach((field) => {
       field.occupiedByShip = true;
       field.ship = ship;
     });
+    return ship;
+  }
+
+  function placeShipsRandomly() {
+    const placedShips = [];
+    let currentShipLenght = 1;
+    while (placedShips.length !== 5) {
+    // for (let i = 0; i < 20; i++) {
+      const x = Math.floor(Math.random() * 10);
+      const y = Math.floor(Math.random() * 10);
+      const randomDirection = Math.floor(Math.random() * 2);
+      let direction;
+
+      switch (randomDirection) {
+        case 1:
+          direction = "vertical";
+          break;
+        case 0:
+          direction = "horizontal";
+          break;
+      }
+
+      const ship = placeShip(currentShipLenght, x, y, direction);
+
+      if (ship !== false) {
+        placedShips.push(ship);
+        currentShipLenght++;
+      }
+    }
   }
 
   function receiveAttack(x, y) {
@@ -182,25 +212,6 @@ export const gameboardFactory = () => {
     placeShip,
     receiveAttack,
     areAllShipsSunk,
+    placeShipsRandomly,
   };
 };
-
-const boardObject = gameboardFactory();
-boardObject.initGameboard();
-boardObject.placeShip(4, 4, 4, "vertical");
-boardObject.placeShip(2, 9, 8, "horizontal");
-boardObject.placeShip(2, 0, 9, "horizontal");
-boardObject.placeShip(2, 7, 8, "horizontal");
-boardObject.receiveAttack(4, 4);
-boardObject.receiveAttack(5, 4);
-boardObject.receiveAttack(6, 4);
-boardObject.receiveAttack(7, 4);
-boardObject.receiveAttack(4, 3);
-boardObject.receiveAttack(7, 8);
-boardObject.receiveAttack(7, 9);
-boardObject.receiveAttack(9, 8);
-boardObject.receiveAttack(9, 9);
-boardObject.printBoard();
-
-console.log(boardObject.areAllShipsSunk());
-
