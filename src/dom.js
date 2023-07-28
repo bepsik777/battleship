@@ -1,13 +1,16 @@
-export function domController(
+import {
+  game,
   playerOneGameboard,
   playerTwoGameboard,
   playerOne,
-  playerTwo,
-) {
+} from "./game.js";
+
+export function domController() {
   const playerOneDisplay = document.querySelector(".player-one-board");
   const playerTwoDisplay = document.querySelector(".player-two-board");
   const boards = [playerOneGameboard.getBoard(), playerTwoGameboard.getBoard()];
   const fields = [];
+  const gameController = game();
   playerOneDisplay.board = boards[0];
   playerTwoDisplay.board = boards[1];
 
@@ -30,12 +33,17 @@ export function domController(
       fields.push(field.position);
     }
 
+    // Add event listeners to each field
     renderedField.addEventListener("click", playOnClick);
+
     boardDisplay.appendChild(renderedField);
+
     return renderedField;
   }
 
-  function renderGameBoard(board, boardDisplay) {
+  function renderGameboard(board, boardDisplay) {
+    boardDisplay.innerHTML = "";
+
     board.forEach((row) => {
       row.forEach((field) => {
         renderField(field, boardDisplay);
@@ -44,75 +52,57 @@ export function domController(
   }
 
   function renderGameboards() {
-    playerTwoDisplay.innerHTML = "";
-    playerOneDisplay.innerHTML = "";
-    renderGameBoard(boards[0], playerOneDisplay);
-    renderGameBoard(boards[1], playerTwoDisplay);
-    console.log(fields);
+    renderGameboard(boards[0], playerOneDisplay);
+    renderGameboard(boards[1], playerTwoDisplay);
   }
 
   function playOnClick(e) {
     // If clicked field is not on enemy board or it is not human player turn: return
     if (e.target.parentElement !== playerTwoDisplay) return;
     if (playerOne.getPlayersTurn() !== true) return;
+    if (e.target.field.hit === true) return
+
     const x = e.target.field.position[0];
     const y = e.target.field.position[1];
-    playerOne.attack(playerTwoGameboard, playerTwo, x, y);
-    console.log(e.target.field);
-    // re-render both gameBoards
-    renderGameboards();
+
+    gameController.play(x, y);
+    
+    // This game ending condition is also present in game.js
+    // console.log(gameController.isGameFinished())
+    if (gameController.isGameFinished()) {
+      renderGameboards()
+      return;
+    }
+    renderGameboard(e.target.parentElement.board, e.target.parentElement);
+
     setTimeout(() => {
-        aiAttack()
-    }, "1000")
+      gameController.play();
+      renderGameboard(boards[0], playerOneDisplay);
+    }, "1500");
   }
 
-  function aiAttack() {
-    playerTwo.attack(playerOneGameboard, playerOne)
-    renderGameboards()
+  function createEndGamePopup(winner) {
+    const modal = document.createElement("div");
+    modal.classList.add("end-game");
+
+    const text = document.createElement("p");
+    text.classList.add("end-game-text");
+
+    console.log(fields);
+  }
+
+  function removeFieldsEventListeners() {
+    const displayedFields = document.querySelectorAll(".field");
+
+    displayedFields.forEach((field) => {
+      field.removeEventListener("click", playOnClick);
+    });
   }
 
   return {
     renderGameboards,
+    createEndGamePopup,
+    removeFieldsEventListeners,
   };
 }
 
-//   function initGameboardDisplay() {
-//     console.log(playerOneDisplay, playerTwoDisplay);
-
-//     boards.forEach((board) => {
-//       board.forEach((row) => {
-//         row.forEach((field) => {
-//           const fieldDisplay = document.createElement("div");
-//           fieldDisplay.classList.add("field");
-//           if (field.occupiedByShip === true) {
-//             fieldDisplay.classList.add("ship");
-//           }
-//           fieldDisplay.textContent = field.position.toString();
-//           fieldDisplay.position = field.position;
-
-//           if (board === playerOneGameboard.getBoard()) {
-//             field.board = playerOneGameboard.getBoard();
-//             playerOneDisplay.appendChild(fieldDisplay);
-//           } else if (board === playerTwoGameboard.getBoard()) {
-//             field.board = playerTwoGameboard.getBoard();
-//             playerTwoDisplay.appendChild(fieldDisplay);
-//           }
-//           fields.push(fieldDisplay);
-//         });
-//       });
-//     });
-
-//     fields.forEach((field) => {
-//       field.addEventListener("click", (e) => {
-//         console.log(e.currentTarget.position);
-//       });
-//     });
-//   }
-
-//   function attack(field, playerOne, playerTwo) {
-//     if (playerOne.getPlayesTurn() === false) return;
-//     if (field.board !== playerTwoGameboard) return;
-//     playerOne.attack(field.board, playerTwo, field.position[0], field.position[1])
-//     // when clicked, call the appropriate attack
-//     playerTwo.attack(playerOneGameboard, playerOne)
-//   }
