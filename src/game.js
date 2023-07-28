@@ -44,8 +44,15 @@ export function game() {
     console.log("--------------------------------------------------------");
     playerTwoGameboard.printBoard();
     if (isGameFinished()) {
+      let winner = '';
+      if (playerOneGameboard.areAllShipsSunk() === true) {
+        winner = "Player Two";
+      }
+      if (playerTwoGameboard.areAllShipsSunk() === true) {
+        winner = "Player One"
+    };
       console.log("game finished");
-      endGame();
+      endGame(winner);
     }
   }
 
@@ -59,8 +66,8 @@ export function game() {
     return false;
   }
 
-  function endGame() {
-    dom.createEndGamePopup();
+  function endGame(winner) {
+    dom.createEndGamePopup(winner);
     dom.removeFieldsEventListeners();
     playerOneGameboard = gameboardFactory();
     playerTwoGameboard = gameboardFactory();

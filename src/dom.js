@@ -6,6 +6,7 @@ import {
 } from "./game.js";
 
 export function domController() {
+  const main = document.querySelector("main");
   const playerOneDisplay = document.querySelector(".player-one-board");
   const playerTwoDisplay = document.querySelector(".player-two-board");
   const boards = [playerOneGameboard.getBoard(), playerTwoGameboard.getBoard()];
@@ -60,17 +61,17 @@ export function domController() {
     // If clicked field is not on enemy board or it is not human player turn: return
     if (e.target.parentElement !== playerTwoDisplay) return;
     if (playerOne.getPlayersTurn() !== true) return;
-    if (e.target.field.hit === true) return
+    if (e.target.field.hit === true) return;
 
     const x = e.target.field.position[0];
     const y = e.target.field.position[1];
 
     gameController.play(x, y);
-    
+
     // This game ending condition is also present in game.js
     // console.log(gameController.isGameFinished())
     if (gameController.isGameFinished()) {
-      renderGameboards()
+      renderGameboards();
       return;
     }
     renderGameboard(e.target.parentElement.board, e.target.parentElement);
@@ -83,10 +84,21 @@ export function domController() {
 
   function createEndGamePopup(winner) {
     const modal = document.createElement("div");
-    modal.classList.add("end-game");
+    modal.classList.add("endgame");
+    modal.classList.add("modal");
 
     const text = document.createElement("p");
     text.classList.add("end-game-text");
+    text.textContent = `${winner} Won`
+
+    const newGameButton = document.createElement('button')
+    newGameButton.classList.add('new-game')
+    newGameButton.textContent = 'New Game'
+
+    main.appendChild(modal)
+    modal.appendChild(text)
+    modal.appendChild(newGameButton)
+
 
     console.log(fields);
   }
@@ -105,4 +117,3 @@ export function domController() {
     removeFieldsEventListeners,
   };
 }
-
