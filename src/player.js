@@ -48,7 +48,7 @@ export const player = (ai, isItPlayersTurn) => {
   }
 
   function isMoveLegal(x, y, board) {
-    if (!x || !y) return false;
+    // if (!x || !y) return false;
     if (board[x][y].hit === true) return false;
     return true;
   }
@@ -60,6 +60,7 @@ export const player = (ai, isItPlayersTurn) => {
     ) {
       randomMove = findRandomMove();
     }
+    console.log(...randomMove)
     return board.receiveAttack(...randomMove);
   }
 
@@ -69,5 +70,6 @@ export const player = (ai, isItPlayersTurn) => {
     setPlayersTurn,
     isMoveLegal,
     changePlayersTurn,
+    findRandomMove
   };
 };
