@@ -13,12 +13,20 @@ const dom = domController(
   playerTwo,
 );
 export function game() {
-  function startGame() {
+  function initGameboards() {
     playerOneGameboard.initGameboard();
     playerTwoGameboard.initGameboard();
+    dom.renderGameboards();
+  }
 
-    playerOneGameboard.placeShipsRandomly(1);
-    playerTwoGameboard.placeShipsRandomly(1);
+  function startGame() {
+    playerOne.setPlayersTurn(true);
+    playerTwo.setPlayersTurn(false);
+    // playerOneGameboard.initGameboard();
+    // playerTwoGameboard.initGameboard();
+
+    // playerOneGameboard.placeShipsRandomly(1);
+    playerTwoGameboard.placeShipsRandomly(5);
 
     playerOneGameboard.printBoard();
     console.log("--------------------------------------------------------");
@@ -40,17 +48,15 @@ export function game() {
       playerTwo.attack(playerOneGameboard, playerOne);
       //   }, "2500");
     }
-    playerOneGameboard.printBoard();
-    console.log("--------------------------------------------------------");
-    playerTwoGameboard.printBoard();
+
     if (isGameFinished()) {
-      let winner = '';
+      let winner = "";
       if (playerOneGameboard.areAllShipsSunk() === true) {
         winner = "Player Two";
       }
       if (playerTwoGameboard.areAllShipsSunk() === true) {
-        winner = "Player One"
-    };
+        winner = "Player One";
+      }
       console.log("game finished");
       endGame(winner);
     }
@@ -71,13 +77,13 @@ export function game() {
     dom.removeFieldsEventListeners();
     playerOneGameboard = gameboardFactory();
     playerTwoGameboard = gameboardFactory();
-    // startGame();
   }
 
   return {
     startGame,
     play,
     isGameFinished,
+    initGameboards
   };
 }
 

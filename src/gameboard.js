@@ -11,6 +11,7 @@ export const gameboardFactory = () => {
       occupiedByShip: false,
       hit: false,
       ship: null,
+      board: getBoard(),
     };
   }
 
@@ -145,11 +146,10 @@ export const gameboardFactory = () => {
     return ship;
   }
 
-  function placeShipsRandomly() {
+  function placeShipsRandomly(amount) {
     const placedShips = [];
     let currentShipLenght = 1;
-    while (placedShips.length !== 5) {
-    // for (let i = 0; i < 20; i++) {
+    while (placedShips.length !== amount) {
       const x = Math.floor(Math.random() * 10);
       const y = Math.floor(Math.random() * 10);
       const randomDirection = Math.floor(Math.random() * 2);
@@ -187,6 +187,7 @@ export const gameboardFactory = () => {
     if (board[x][y].ship !== null) board[x][y].ship.hit();
 
     board[x][y].hit = true;
+    // printBoard();
   }
 
   function areAllShipsSunk() {
