@@ -2,37 +2,41 @@ import { gameboardFactory } from "./gameboard.js";
 import { player } from "./player.js";
 import { domController } from "./dom.js";
 
-let playerOneGameboard = gameboardFactory();
-let playerTwoGameboard = gameboardFactory();
+let playerOneGameboard 
+let playerTwoGameboard 
+let gameMode 
+const getPlayerOneGameboard = () => playerOneGameboard
+const getPlayerTwoGameboard = () => playerTwoGameboard
 const playerOne = player(false, true);
 const playerTwo = player(true, false);
 const dom = domController(
-  playerOneGameboard,
-  playerTwoGameboard,
   playerOne,
   playerTwo,
 );
 export function game() {
   function initGameboards() {
+    const playerOneDisplay = dom.playerOneDisplay
+    const playerTwoDisplay = dom.playerTwoDisplay
+    // let currentShipLength = 1
+    gameMode = 'init'
+    playerOneGameboard = gameboardFactory();
+    playerTwoGameboard = gameboardFactory();
     playerOneGameboard.initGameboard();
     playerTwoGameboard.initGameboard();
-    dom.renderGameboards();
+    playerOneDisplay.board = playerOneGameboard.getBoard()
+    playerTwoDisplay.board = playerTwoGameboard.getBoard()
+    console.log(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard())
+    dom.renderGameboards(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard());
   }
 
   function startGame() {
+    gameMode = 'game'
     playerOne.setPlayersTurn(true);
     playerTwo.setPlayersTurn(false);
-    // playerOneGameboard.initGameboard();
-    // playerTwoGameboard.initGameboard();
 
-    // playerOneGameboard.placeShipsRandomly(1);
     playerTwoGameboard.placeShipsRandomly(5);
-
-    playerOneGameboard.printBoard();
-    console.log("--------------------------------------------------------");
-    playerTwoGameboard.printBoard();
-
-    dom.renderGameboards();
+    dom.renderGameboards(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard());
+    console.log(playerOneGameboard.getBoard())
   }
 
   function play(x, y) {
@@ -75,16 +79,17 @@ export function game() {
   function endGame(winner) {
     dom.createEndGamePopup(winner);
     dom.removeFieldsEventListeners();
-    playerOneGameboard = gameboardFactory();
-    playerTwoGameboard = gameboardFactory();
   }
 
   return {
     startGame,
     play,
+    endGame,
     isGameFinished,
-    initGameboards
+    initGameboards,
+    getPlayerOneGameboard,
+    getPlayerTwoGameboard
   };
 }
 
-export { playerOneGameboard, playerTwoGameboard, playerOne, playerTwo };
+export { playerOne, playerTwo };

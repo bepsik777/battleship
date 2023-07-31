@@ -1,28 +1,21 @@
-import {
-  game,
-  playerOneGameboard,
-  playerTwoGameboard,
-  playerOne,
-} from "./game.js";
+import { game, playerOne } from "./game.js";
 import { gameboardFactory } from "./gameboard.js";
 
 export function domController() {
   const gameboardController = gameboardFactory();
+  const gameController = game();
   const main = document.querySelector("main");
   const playerOneDisplay = document.querySelector(".player-one-board");
   const playerTwoDisplay = document.querySelector(".player-two-board");
-  let boards = [playerOneGameboard.getBoard(), playerTwoGameboard.getBoard()];
+  const switchPositionButton = document.querySelector(".switch-position");
   const fields = [];
-  const gameController = game();
+  const playerTwoGameboard = gameController.getPlayerTwoGameboard();
+  let playerOneGameboard = gameController.getPlayerOneGameboard();
   let gameMode = "init";
   let shipLength = 1;
   let x;
   let y;
-  const position = "vertical";
-  playerOneDisplay.board = boards[0];
-  playerTwoDisplay.board = boards[1];
-  playerOneDisplay.boardObject = playerOneGameboard;
-  playerTwoDisplay.boardObject = playerTwoGameboard;
+  let position = "vertical";
 
   function renderField(field, boardDisplay) {
     const renderedField = document.createElement("div");
@@ -48,16 +41,9 @@ export function domController() {
       renderedField.addEventListener("mouseout", unhighlightTargetFields);
       renderedField.addEventListener("click", placeShip);
       renderedField.addEventListener("click", changeGameMode);
-
     } else if (gameMode === "game") {
       renderedField.addEventListener("click", playOnClick);
     }
-
-    // Add event listeners to each field
-    // renderedField.addEventListener("click", playOnClick);
-    // renderedField.addEventListener("mouseover", highlightTargetField);
-    // renderedField.addEventListener("mouseout", unhighlightTargetFields);
-    // renderedField.addEventListener("click", placeShip);
 
     boardDisplay.appendChild(renderedField);
 
@@ -74,10 +60,10 @@ export function domController() {
     });
   }
 
-  function renderGameboards() {
-    renderGameboard(boards[0], playerOneDisplay);
-    renderGameboard(boards[1], playerTwoDisplay);
-    console.log(boards, playerOneDisplay, playerTwoDisplay);
+  function renderGameboards(playerOneGameboard, playerTwoGameboard) {
+    renderGameboard(playerOneGameboard, playerOneDisplay);
+    renderGameboard(playerTwoGameboard, playerTwoDisplay);
+    console.log(playerOneDisplay, playerTwoDisplay);
   }
 
   function playOnClick(e) {
@@ -94,14 +80,19 @@ export function domController() {
     // This game ending condition is also present in game.js
     // console.log(gameController.isGameFinished())
     if (gameController.isGameFinished()) {
-      renderGameboards();
+      const playerOneGameboard = gameController.getPlayerOneGameboard();
+      const playerTwoGameboard = gameController.getPlayerTwoGameboard();
+      renderGameboards(
+        playerOneGameboard.getBoard(),
+        playerTwoGameboard.getBoard(),
+      );
       return;
     }
     renderGameboard(e.target.parentElement.board, e.target.parentElement);
 
     setTimeout(() => {
       gameController.play();
-      renderGameboard(boards[0], playerOneDisplay);
+      renderGameboard(playerOneGameboard.getBoard(), playerOneDisplay);
     }, "1500");
   }
 
@@ -123,7 +114,26 @@ export function domController() {
     modal.appendChild(newGameButton);
 
     newGameButton.addEventListener("click", (e) => {
+      //   playerOneDisplay.boardObject = playerOneGameboard.getBoard();
+      //   playerTwoDisplay.boardObject = playerTwoGameboard.getBoard();
       resetDisplay();
+    });
+  }
+
+  function createStartGamePopup() {
+    const modal = document.createElement("div");
+    modal.classList.add("start-game-modal");
+
+    const startGameButton = document.createElement("button");
+    startGameButton.classList.add("start-game-button");
+    startGameButton.textContent = "Start Game";
+
+    main.appendChild(modal);
+    modal.appendChild(startGameButton);
+
+    startGameButton.addEventListener("click", () => {
+      main.removeChild(modal);
+      gameController.startGame();
     });
   }
 
@@ -137,33 +147,33 @@ export function domController() {
 
   function resetDisplay() {
     const modal = document.querySelector(".modal");
-    boards = [playerOneGameboard.getBoard(), playerTwoGameboard.getBoard()];
-    playerOneDisplay.board = boards[0];
-    playerTwoDisplay.board = boards[1];
+
     main.removeChild(modal);
-    gameController.startGame();
+    gameMode = "init";
+    shipLength = 1;
+    gameController.initGameboards();
   }
 
   // SHIP PLACING LOGIC
 
-  // const boardObject = e.target.parentElement.boardObject;
-  // const board = e.target.parentElement.board
-  // const displayedBoard = e.target.parentElement;
-  // let shipLength = 1;
-  // let x;
-  // let y;
-  // const position = "vertical";
-
   function showTargetFields(e) {
+    playerOneGameboard = gameController.getPlayerOneGameboard();
+
+    playerOneDisplay.boardObject = playerOneGameboard;
     if (shipLength > 5) return;
-    if (e.target.parentElement.boardObject !== playerOneGameboard) return;
+    if (e.target.parentElement.boardObject !== playerOneGameboard) {
+      // console.log(e.target.parentElement.boardObject);
+      // console.log(playerOneGameboard.getBoard());
+      // console.log(playerOneGameboard === e.target.parentElement.boardObject);
+      console.log("not the same");
+      return;
+    }
     const renderedFields = Array.from(document.querySelectorAll(".field"));
-    // const x = e.target.field.position[0];
-    // const y = e.target.field.position[1];
+
     x = e.target.field.position[0];
     y = e.target.field.position[1];
-    const board = e.target.parentElement.board;
-    // shipLength = 3;
+    // const board = e.target.parentElement.board;
+    const board = playerOneGameboard.getBoard();
     const targetFields = gameboardController.findTargetFields(
       shipLength,
       x,
@@ -186,6 +196,7 @@ export function domController() {
   }
 
   function highlightTargetField(e) {
+    console.log(e.target);
     const targetFields = showTargetFields(e);
     if (targetFields) {
       targetFields.forEach((field) => field.classList.add("active"));
@@ -200,12 +211,12 @@ export function domController() {
   }
 
   function placeShip(e) {
-    // const x = e.target.field.position[0]
-    // const y = e.target.field.position[1]
-    if (shipLength > 5) return;
-    const boardObject = e.target.parentElement.boardObject;
-    const board = e.target.parentElement.board;
-    const displayedBoard = e.target.parentElement;
+    if (shipLength > 5) {
+      return;
+    }
+    const boardObject = playerOneGameboard;
+    const board = playerOneGameboard.getBoard();
+    const displayedBoard = playerOneDisplay;
 
     const ship = boardObject.placeShip(shipLength, x, y, position);
     if (ship !== false) {
@@ -214,17 +225,38 @@ export function domController() {
       console.log(board);
       console.log(shipLength);
     }
+    if (shipLength > 5) createStartGamePopup();
   }
 
-  function changeGameMode () {
-    if (shipLength > 5) gameMode = 'game'
-    if (shipLength < 5) gameMode = 'init'
-    renderGameboards()
+  function changeGameMode() {
+    const playerOneGameboard = gameController.getPlayerOneGameboard();
+    const playerTwoGameboard = gameController.getPlayerTwoGameboard();
+    if (shipLength > 5) gameMode = "game";
+    if (shipLength < 5) gameMode = "init";
+    renderGameboards(
+      playerOneGameboard.getBoard(),
+      playerTwoGameboard.getBoard(),
+    );
   }
+
+  function switchPosition() {
+    switch (position) {
+      case "vertical":
+        position = "horizontal";
+        break;
+      case "horizontal":
+        position = "vertical";
+        break;
+    }
+  }
+
+  switchPositionButton.addEventListener("click", switchPosition);
 
   return {
     renderGameboards,
     createEndGamePopup,
     removeFieldsEventListeners,
+    playerOneDisplay,
+    playerTwoDisplay,
   };
 }
