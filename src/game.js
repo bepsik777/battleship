@@ -4,7 +4,6 @@ import { domController } from "./dom.js";
 
 let playerOneGameboard 
 let playerTwoGameboard 
-let gameMode 
 const getPlayerOneGameboard = () => playerOneGameboard
 const getPlayerTwoGameboard = () => playerTwoGameboard
 const playerOne = player(false, true);
@@ -17,26 +16,21 @@ export function game() {
   function initGameboards() {
     const playerOneDisplay = dom.playerOneDisplay
     const playerTwoDisplay = dom.playerTwoDisplay
-    // let currentShipLength = 1
-    gameMode = 'init'
     playerOneGameboard = gameboardFactory();
     playerTwoGameboard = gameboardFactory();
     playerOneGameboard.initGameboard();
     playerTwoGameboard.initGameboard();
     playerOneDisplay.board = playerOneGameboard.getBoard()
     playerTwoDisplay.board = playerTwoGameboard.getBoard()
-    console.log(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard())
     dom.renderGameboards(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard());
   }
 
   function startGame() {
-    gameMode = 'game'
     playerOne.setPlayersTurn(true);
     playerTwo.setPlayersTurn(false);
 
     playerTwoGameboard.placeShipsRandomly(5);
     dom.renderGameboards(playerOneGameboard.getBoard(), playerTwoGameboard.getBoard());
-    console.log(playerOneGameboard.getBoard())
   }
 
   function play(x, y) {
@@ -45,12 +39,8 @@ export function game() {
 
     if (playerOneTurn === true) {
       playerOne.attack(playerTwoGameboard, playerTwo, x, y);
-      console.log("player one attacked");
     } else if (playerTwoTurn === true) {
-      //   setTimeout(() => {
-      console.log("player two attakced");
       playerTwo.attack(playerOneGameboard, playerOne);
-      //   }, "2500");
     }
 
     if (isGameFinished()) {
@@ -61,7 +51,6 @@ export function game() {
       if (playerTwoGameboard.areAllShipsSunk() === true) {
         winner = "Player One";
       }
-      console.log("game finished");
       endGame(winner);
     }
   }

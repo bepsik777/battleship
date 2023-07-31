@@ -48,12 +48,11 @@ export const player = (ai, isItPlayersTurn) => {
   }
 
   function isMoveLegal(x, y, board) {
-    // if (!x || !y) return false;
     if (board[x][y].hit === true) return false;
     return true;
   }
 
-  function aiAttack(board, attackedPlayer) {
+  function aiAttack(board) {
     let randomMove = findRandomMove();
     while (
       isMoveLegal(randomMove[0], randomMove[1], board.getBoard()) === false

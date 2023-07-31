@@ -51,3 +51,82 @@ html {
     background-color: lightblue;
 }
 
+.field.hit {
+    background-color: red;
+}
+
+.field.hit.ship {
+    background-color: blueviolet;
+}
+.field.hit.sunk {
+    background-color: orangered;
+}
+
+.field.active {
+    background-color: bisque;
+}
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 400px;
+    height: 200px;
+    outline: 1px solid black;
+    background-color: rgb(118, 76, 243);
+    z-index: 1;
+}
+
+.modal.end-game {
+    flex-direction: column;
+}
+
+.start-game-button,
+.new-game-button {
+    width: 80px;
+    height: 60px;
+    background-color: rgb(106, 129, 23);
+    color: aqua;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.new-game-button {
+    margin-top: 20px;
+}
+
+.end-game-text {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.start-game-button:hover {
+    background-color: rgb(80, 99, 14);
+}
+
+.switch-position {
+    position: absolute;
+    top: 150px;
+
+    width: 80px;
+    height: 30px;
+    background-color: rgba(118, 76, 243, 0.683);
+    color: aqua;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.switch-position:hover {
+    background-color: rgba(118, 76, 243, 0.922);
+}
+
+.switch-position.hidden {
+    display: none;
+}
