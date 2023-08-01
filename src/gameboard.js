@@ -188,6 +188,7 @@ export const gameboardFactory = () => {
 
     board[x][y].hit = true;
     // printBoard();
+    return board[x][y]
   }
 
   function areAllShipsSunk() {

@@ -12,6 +12,7 @@
         "sourceType": "module"
     },
     "rules": {
-        "require-jsdoc": "off"
+        "require-jsdoc": "off",
+        "prefer-const": "off"
     }
 }

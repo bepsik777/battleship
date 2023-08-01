@@ -1,3 +1,5 @@
+import { aiAttack } from "./ai.js";
+
 export const player = (ai, isItPlayersTurn) => {
   const isAi = ai;
   let playersTurn = isItPlayersTurn;
@@ -52,16 +54,16 @@ export const player = (ai, isItPlayersTurn) => {
     return true;
   }
 
-  function aiAttack(board) {
-    let randomMove = findRandomMove();
-    while (
-      isMoveLegal(randomMove[0], randomMove[1], board.getBoard()) === false
-    ) {
-      randomMove = findRandomMove();
-    }
-    console.log(...randomMove)
-    return board.receiveAttack(...randomMove);
-  }
+  // function aiAttack(board) {
+  //   let randomMove = findRandomMove();
+  //   while (
+  //     isMoveLegal(randomMove[0], randomMove[1], board.getBoard()) === false
+  //   ) {
+  //     randomMove = findRandomMove();
+  //   }
+  //   console.log(...randomMove)
+  //   return board.receiveAttack(...randomMove);
+  // }
 
   return {
     attack,
