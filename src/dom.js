@@ -207,7 +207,7 @@ export function domController() {
   }
 
   function placeShip(e) {
-    if (shipLength > 5) {
+    if (shipLength > 5 || e.target.parentElement === playerTwoDisplay) {
       return;
     }
     const boardObject = playerOneGameboard;
