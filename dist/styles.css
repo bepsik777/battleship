@@ -6,6 +6,7 @@
 
 html {
     min-height: 100vh;
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 .header {
@@ -47,9 +48,10 @@ html {
     outline: 1px solid black;
 }
 
-.field.ship {
+.field.ship:not(.hidden) {
     background-color: lightblue;
 }
+
 
 .field.hit {
     background-color: red;
@@ -59,12 +61,17 @@ html {
     background-color: blueviolet;
 }
 .field.hit.sunk {
-    background-color: orangered;
+    background-color: rgb(31, 6, 54);
+    border: 3px solid white;
 }
 
 .field.active {
     background-color: bisque;
 }
+
+/* .field.hidden {
+background-color: white;
+} */
 
 .modal {
     display: flex;

@@ -22,6 +22,9 @@ export function domController() {
     if (field.ship !== null) {
       renderedField.classList.add("ship");
     }
+    if (field.ship !== null && boardDisplay === playerTwoDisplay) {
+        renderedField.classList.add("hidden");
+      }
     if (field.ship !== null && field.ship.isSunk()) {
       renderedField.classList.add("sunk");
     }
