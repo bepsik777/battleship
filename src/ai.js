@@ -84,33 +84,27 @@ function aiAttack(board) {
     tempHitedField = board.receiveAttack(...randomMove);
     if (tempHitedField.ship !== null) {
       hits += 1;
-      console.log(tempHitedField)
     }
-      return;
+    return;
   }
 
   if (hits > 1) {
-    if (tempHitedField.position[0] > hitedField.position[0] || tempHitedField[1] > hitedField[1]) {
-        let temp = hitedField
-        hitedField = tempHitedField
-        tempHitedField = temp
+    if (
+      tempHitedField.position[0] > hitedField.position[0] ||
+      tempHitedField[1] > hitedField[1]
+    ) {
+      let temp = hitedField;
+      hitedField = tempHitedField;
+      tempHitedField = temp;
     }
     const targetFields = findAdjacentFieldOnAxis(
       hitedField,
       tempHitedField,
       board,
     );
-    console.log(targetFields, "target fields");
-    console.log(hitedField.position, "hited field");
-    console.log(tempHitedField.position, "temp hited field");
     const randomNum = Math.floor(Math.random() * targetFields.length);
-    console.log(randomNum, "random num");
     const randomMove = targetFields[randomNum];
-    console.log(randomMove, "random move");
     const newHitedField = board.receiveAttack(...randomMove);
-    console.log(newHitedField.position, "new hited field");
-    console.log(hitedField.position, "hited field");
-    console.log(tempHitedField.position, "temp hited field");
     if (
       (newHitedField.ship !== null &&
         newHitedField.position[0] < hitedField.position[0]) ||
