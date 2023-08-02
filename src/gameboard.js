@@ -91,13 +91,11 @@ export const gameboardFactory = () => {
     for (let i = 0; i < shipLength; i++) {
       if (direction === "horizontal") {
         if (isOutOfBound(x, y + i)) {
-          console.log("out of bounds");
           return false;
         }
         targetFields.push(board[x][y + i]);
       } else if (direction === "vertical") {
         if (isOutOfBound(x + i, y)) {
-          console.log("out of bounds");
           return false;
         }
         targetFields.push(board[x + i][y]);
@@ -116,7 +114,6 @@ export const gameboardFactory = () => {
   }
 
   function canShipBePlaced(targetFields, neighbourFields) {
-    console.log(targetFields, "target fields");
     if (!targetFields) return false;
 
     // if fields are already occupied, or neighbour fields are occupied, return false
@@ -175,12 +172,10 @@ export const gameboardFactory = () => {
 
   function receiveAttack(x, y) {
     if (isOutOfBound(x, y)) {
-      console.log("out of bounds");
       return false;
     }
 
     if (board[x][y].hit) {
-      console.log("field already hit");
       return false;
     }
 

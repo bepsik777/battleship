@@ -32,12 +32,8 @@ export const player = (ai, isItPlayersTurn) => {
   function attack(board, attackedPlayer, x, y) {
     changePlayersTurn(attackedPlayer);
     if (isAi) {
-      console.log("player one turn", playersTurn);
-      console.log("player two turn", attackedPlayer.getPlayersTurn());
       aiAttack(board, attackedPlayer);
     } else {
-      console.log("player one turn", playersTurn);
-      console.log("player two turn", attackedPlayer.getPlayersTurn());
       return board.receiveAttack(x, y);
     }
   }
@@ -54,16 +50,7 @@ export const player = (ai, isItPlayersTurn) => {
     return true;
   }
 
-  // function aiAttack(board) {
-  //   let randomMove = findRandomMove();
-  //   while (
-  //     isMoveLegal(randomMove[0], randomMove[1], board.getBoard()) === false
-  //   ) {
-  //     randomMove = findRandomMove();
-  //   }
-  //   console.log(...randomMove)
-  //   return board.receiveAttack(...randomMove);
-  // }
+
 
   return {
     attack,
