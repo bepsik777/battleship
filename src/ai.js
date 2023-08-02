@@ -91,7 +91,7 @@ function aiAttack(board) {
   if (hits > 1) {
     if (
       tempHitedField.position[0] > hitedField.position[0] ||
-      tempHitedField[1] > hitedField[1]
+      tempHitedField.position[1] > hitedField.position[1]
     ) {
       let temp = hitedField;
       hitedField = tempHitedField;

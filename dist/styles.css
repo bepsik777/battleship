@@ -72,10 +72,6 @@ body {
     background-color: bisque;
 }
 
-/* .field.hidden {
-background-color: white;
-} */
-
 .modal {
     display: flex;
     align-items: center;
